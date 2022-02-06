@@ -4,6 +4,24 @@
  <head>
  <meta charset="UTF-8">
  <script language="javascript" type="text/javascript" src="web3.min.js"></script>
+ <script>
+     window.addEventListener("load", function () {
+        if (typeof web3 !== "undefined") {
+            web3js = new Web3(web3.currentProvider);
+        } else {
+            alert("MetaMaskをインストールして下さい");
+        }
+        startApp();
+    });
+
+    web3js.eth.getAccounts(function (err, accounts) {
+    coinbase = accounts[0];
+    console.log("coinbase is " + coinbase);
+    if (typeof coinbase === "undefined") {
+        alert("MetaMaskを起動してください．");
+    }
+    });
+ </script>
  <!-- <script language="javascript" type="text/javascript" src="registerAccountAbi.js"></script> -->
  </head>
  <body>
