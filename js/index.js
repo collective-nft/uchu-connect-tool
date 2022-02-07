@@ -213,7 +213,7 @@ let web3js;
 let sale_contract;
 window.addEventListener("load", function () {
   if (typeof web3 !== "undefined") {
-    web3js = new Web3(web3.currentProvider);
+    web3js = new Web3(window.ethereum);
   } else {
     alert("MetaMaskをインストールして下さい");
   }
@@ -221,6 +221,7 @@ window.addEventListener("load", function () {
 });
 
 function startApp() {
+  const accounts = ethereum.request({ method: "eth_requestAccounts" });
   web3js.eth.getAccounts(function (err, accounts) {
     coinbase = accounts[0];
     console.log("coinbase is " + coinbase);
@@ -255,7 +256,7 @@ function withdraw() {
 }
 
 function soldTokenCounter() {
-  contract.methods
+  sale_contract.methods
     .soldTokenCounter()
     .call()
     .then(function (soldTokenCounter) {
