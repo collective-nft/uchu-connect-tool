@@ -219,9 +219,11 @@ const sale_contract_abi = {
 };
 
 let web3js;
-let sunrise_contract;
-let dogu_contract;
 let userAccount;
+let sunriseContract;
+let sunriseSalesRecipient;
+let doguContract;
+let doguSalesRecipient;
 
 window.addEventListener("load", function () {
   if (typeof web3 !== "undefined") {
@@ -233,58 +235,87 @@ window.addEventListener("load", function () {
 });
 
 function startApp() {
-  let accounts = ethereum.request({ method: "eth_requestAccounts" });
-  userAccount = accounts[0];
+  ethereum.request({ method: "eth_requestAccounts" });
+  web3js.eth.getAccounts(function (err, accounts) {
+    userAccount = accounts[0];
+  });
 
-  sunrise_contract = new web3js.eth.Contract(
+  sunriseContract = new web3js.eth.Contract(
     sale_contract_abi.abi,
     sale_contract_addr.sunrise
   );
-  dogu_contract = new web3js.eth.Contract(
+  doguContract = new web3js.eth.Contract(
     sale_contract_abi.abi,
     sale_contract_addr.dogu
   );
+  getSalesRecipient(contruct_type.dogu);
+  getSalesRecipient(contruct_type.sunrise);
 
-  document.getElementById("dogu_count_get").addEventListener("click", () =>
-    soldTokenCounter(contruct_type.dogu, function (val) {
-      document.getElementById("dogu_count").textContent = val;
-    })
-  );
+  document
+    .getElementById("dogu_count_get")
+    .addEventListener("click", () => soldTokenCounter(contruct_type.dogu));
   document
     .getElementById("dogu_withdraw")
     .addEventListener("click", () => withdraw(contruct_type.dogu));
 
-  document.getElementById("sunrise_count_get").addEventListener("click", () =>
-    soldTokenCounter(contruct_type.sunrise, function (val) {
-      document.getElementById("sunrise_count").textContent = val;
-    })
-  );
+  document
+    .getElementById("sunrise_count_get")
+    .addEventListener("click", () => soldTokenCounter(contruct_type.sunrise));
   document
     .getElementById("sunrise_withdraw")
     .addEventListener("click", () => withdraw(contruct_type.sunrise));
 }
 
 function withdraw(type) {
-  var contract = type == contruct_type.dogu ? dogu_contract : sunrise_contract;
-  var amount = document.getElementById("amount").value;
+  let contract = type == contruct_type.dogu ? doguContract : sunriseContract;
+  let salesRecipient =
+    type == contruct_type.dogu ? doguSalesRecipient : sunriseSalesRecipient;
+  let amount = document.getElementById("amount").value;
+
+  if (salesRecipient != userAccount) {
+    alert("権限がありません");
+    return;
+  }
 
   return contract.methods
     .withdrawFee(web3js.utils.toWei(amount))
     .send({ from: userAccount })
     .on("receipt", function (receipt) {
-      alert("success");
+      alert("成功しました。");
     })
     .on("error", function (error) {
       alert("error" + error);
     });
 }
 
-function soldTokenCounter(type, callback) {
-  contract = type == contruct_type.dogu ? dogu_contract : sunrise_contract;
+function soldTokenCounter(type) {
+  let contract = type == contruct_type.dogu ? doguContract : sunriseContract;
+  let idName = type == contruct_type.dogu ? "dogu_count" : "sunrise_count";
+
   return contract.methods
     .soldTokenCounter()
     .call()
-    .then(callback)
+    .then(function (val) {
+      document.getElementById(idName).textContent = val;
+    })
+    .catch((error) => {
+      alert("エラーが発生しました。");
+      console.dir(error);
+    });
+}
+
+function getSalesRecipient(type) {
+  contract = type == contruct_type.dogu ? doguContract : sunriseContract;
+  return contract.methods
+    .salesRecipient()
+    .call()
+    .then(function (val) {
+      if (type == contruct_type.dogu) {
+        doguSalesRecipient = val;
+        return;
+      }
+      sunriseSalesRecipient = val;
+    })
     .catch((error) => {
       alert("エラーが発生しました。");
       console.dir(error);
