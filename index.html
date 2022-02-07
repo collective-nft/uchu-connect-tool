@@ -3,22 +3,33 @@
  <title>admin uchu</title>
  <head>
  <meta charset="UTF-8">
- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
- <script language="javascript" type="text/javascript" src="js/web3.min.js"></script>
- <script language="javascript" type="text/javascript" src="js/index.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/index.css">
+    <script language="javascript" type="text/javascript" src="js/web3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="js/index.js"></script>
  </head>
  <body>
     <div class="container">
-        <h1>uchu contract admin tool</h1>
-        <div class="jumbotron mt-3">
-            <h2>SoldTokenCounter</h2>
-            <p class="lead">soldTokenCounter取得</p>
-            <button id="soldTokenCounter">soldTokenCounter取得</button>
+        <h1>admin tool</h1>
+        <div class="jumbotron">
+            <h2>DOGU</h2>
+            <h5>発行数取得</h5>
+            <button class=" btn btn-primary btn-sm" id="dogu_count_get">取得</button>
+            <p>発行数:<span id="dogu_count"></span></p>
+            <hr>
+            <h5>資金引き出し</h5>
+            <input class="form-control" placeholder="引き出すeth" type="number" name="amount" id="amount">
+            <button class="btn btn-primary btn-sm" id="dogu_withdraw">実行</button>
         </div>
-        <div class="jumbotron mt-3">
-            <h2>withdraw</h2>
-            <input type="number" name="amount" id="amount">
-            <button id="withdraw">withdraw</button>
+        <div class="jumbotron">
+            <h2>SUNRISE</h2>
+            <h5>発行数取得</h5>
+            <button class=" btn btn-primary btn-sm" id="sunrise_count_get">取得</button>
+            <p>発行数:<span id="sunrise_count"></span></p>
+            <hr>
+            <h5>資金引き出し</h5>
+            <input class="form-control" placeholder="引き出すeth" type="number" name="amount" id="amount">
+            <button class="btn btn-primary btn-sm" id="sunrise_withdraw">実行</button>
         </div>
     </div>
  </body>

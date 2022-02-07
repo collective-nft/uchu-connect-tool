@@ -1,4 +1,13 @@
-const sale_contract_addr = "0x14b570127FA1a797173Bb8320ADd31E8a9C5c4A7";
+const contruct_type = {
+  dogu: "dogu",
+  sunrise: "sunrise",
+};
+
+const sale_contract_addr = {
+  dogu: "0x9a0cb40A9b124A63D329c6f6E2639DfbAC6aF4f0",
+  sunrise: "0xE34470f0Fc5a63F7010be2AcB7fc72A9Ff5f82f5",
+};
+
 const sale_contract_abi = {
   _format: "hh-sol-artifact-1",
   contractName: "Sale",
@@ -210,7 +219,10 @@ const sale_contract_abi = {
 };
 
 let web3js;
-let sale_contract;
+let sunrise_contract;
+let dogu_contract;
+let userAccount;
+
 window.addEventListener("load", function () {
   if (typeof web3 !== "undefined") {
     web3js = new Web3(window.ethereum);
@@ -221,32 +233,44 @@ window.addEventListener("load", function () {
 });
 
 function startApp() {
-  const accounts = ethereum.request({ method: "eth_requestAccounts" });
-  web3js.eth.getAccounts(function (err, accounts) {
-    coinbase = accounts[0];
-    console.log("coinbase is " + coinbase);
-    if (typeof coinbase === "undefined") {
-      alert("MetaMaskを起動してください．");
-    }
-  });
+  let accounts = ethereum.request({ method: "eth_requestAccounts" });
+  userAccount = accounts[0];
 
-  sale_contract = new web3js.eth.Contract(
+  sunrise_contract = new web3js.eth.Contract(
     sale_contract_abi.abi,
-    sale_contract_addr
+    sale_contract_addr.sunrise
+  );
+  dogu_contract = new web3js.eth.Contract(
+    sale_contract_abi.abi,
+    sale_contract_addr.dogu
   );
 
-  document.getElementById("withdraw").addEventListener("click", withdraw);
+  document.getElementById("dogu_count_get").addEventListener("click", () =>
+    soldTokenCounter(contruct_type.dogu, function (val) {
+      document.getElementById("dogu_count").textContent = val;
+    })
+  );
   document
-    .getElementById("soldTokenCounter")
-    .addEventListener("click", soldTokenCounter);
+    .getElementById("dogu_withdraw")
+    .addEventListener("click", () => withdraw(contruct_type.dogu));
+
+  document.getElementById("sunrise_count_get").addEventListener("click", () =>
+    soldTokenCounter(contruct_type.sunrise, function (val) {
+      document.getElementById("sunrise_count").textContent = val;
+    })
+  );
+  document
+    .getElementById("sunrise_withdraw")
+    .addEventListener("click", () => withdraw(contruct_type.sunrise));
 }
 
-function withdraw() {
+function withdraw(type) {
+  var contract = type == contruct_type.dogu ? dogu_contract : sunrise_contract;
   var amount = document.getElementById("amount").value;
 
-  return sale_contract.methods
+  return contract.methods
     .withdrawFee(web3js.utils.toWei(amount))
-    .send({ from: coinbase })
+    .send({ from: userAccount })
     .on("receipt", function (receipt) {
       alert("success");
     })
@@ -255,11 +279,14 @@ function withdraw() {
     });
 }
 
-function soldTokenCounter() {
-  sale_contract.methods
+function soldTokenCounter(type, callback) {
+  contract = type == contruct_type.dogu ? dogu_contract : sunrise_contract;
+  return contract.methods
     .soldTokenCounter()
     .call()
-    .then(function (soldTokenCounter) {
-      console.log(soldTokenCounter);
+    .then(callback)
+    .catch((error) => {
+      alert("エラーが発生しました。");
+      console.dir(error);
     });
 }

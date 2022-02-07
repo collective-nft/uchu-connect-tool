@@ -1,8 +1,8 @@
-version: '3' # docker-composeの使用バージョン
-services:    # 「作られるサービスの設定を以下に記載します」の意味
+version: '3'
+services: 
   nginx:
     image: nginx
     ports:
-      - "80:80"  # EC2が公開しているポート番号:コンテナのポート番号
+      - "80:80"  
     volumes:
-      - ./:/usr/share/nginx/html #EC2内のパス:コンテナ内のパス
+      - ./:/usr/share/nginx/html 
