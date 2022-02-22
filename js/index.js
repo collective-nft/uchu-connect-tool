@@ -270,7 +270,9 @@ function withdraw(type) {
   let contract = type == contruct_type.dogu ? doguContract : sunriseContract;
   let salesRecipient =
     type == contruct_type.dogu ? doguSalesRecipient : sunriseSalesRecipient;
-  let amount = document.getElementById("amount").value;
+  let amountName =
+    type == contruct_type.dogu ? "dogu_amount" : "sunrise_amount";
+  let amount = document.getElementById(amountName).value;
 
   if (salesRecipient != userAccount) {
     alert("権限がありません");
